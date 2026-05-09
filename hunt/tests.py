@@ -1,7 +1,7 @@
 import json
 
 from asgiref.sync import async_to_sync
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from .consumers import GameConsumer
@@ -10,6 +10,17 @@ from .services import game_payload, latest_snapshots_for_game
 
 
 class GameFlowTests(TestCase):
+    @override_settings(SITE_PASSWORD="secret")
+    def test_site_password_blocks_home_until_unlocked(self):
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("site_login"), response["Location"])
+
+        response = self.client.post(reverse("site_login"), {"password": "secret", "next": reverse("home")})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.status_code, 200)
+
     def test_create_game(self):
         response = self.client.post(reverse("home"), {"action": "create", "create-name": "Davy"})
         self.assertEqual(response.status_code, 302)

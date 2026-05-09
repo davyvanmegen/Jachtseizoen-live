@@ -1,0 +1,14 @@
+{% extends "hunt/base.html" %}
+{% block content %}
+<section class="home">
+  <h1>Jachtseizoen Live</h1>
+  <form method="post" class="panel">
+    {% csrf_token %}
+    <h2>Toegang</h2>
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <label for="password">Wachtwoord</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+    <button type="submit">Naar binnen</button>
+  </form>
+</section>
+{% endblock %}

@@ -98,9 +98,12 @@ SECRET_KEY=<automatisch of zelf instellen>
 DATABASE_URL=<Render Postgres connection string>
 ALLOWED_HOSTS=.onrender.com
 CSRF_TRUSTED_ORIGINS=https://*.onrender.com
+SITE_PASSWORD=<wachtwoord dat spelers moeten invullen>
 ```
 
 Render geeft automatisch HTTPS. Daardoor werkt geolocation op telefoons beter dan lokaal via `http://192.168.x.x`.
+
+Laat `SITE_PASSWORD` leeg of verwijder de env var als je geen toegangsscherm wilt. Zet hem op Render in `Environment` op een wachtwoord dat je met je groep deelt.
 
 ## Implementatienotities
 

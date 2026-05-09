@@ -17,6 +17,7 @@ if DEBUG and not ALLOWED_HOSTS:
 
 csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins.split(",") if origin.strip()]
+SITE_PASSWORD = os.environ.get("SITE_PASSWORD", "")
 
 INSTALLED_APPS = [
     "hunt",
@@ -36,6 +37,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "hunt.middleware.SitePasswordMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

@@ -2,6 +2,7 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import Http404, JsonResponse
@@ -55,6 +56,19 @@ def forbidden_response(request, message):
     if wants_json(request):
         return JsonResponse({"error": message}, status=403)
     raise PermissionDenied(message)
+
+
+@ensure_csrf_cookie
+def site_login(request):
+    next_url = request.GET.get("next") or request.POST.get("next") or "home"
+    if not getattr(settings, "SITE_PASSWORD", ""):
+        return redirect(next_url)
+    if request.method == "POST":
+        if request.POST.get("password") == settings.SITE_PASSWORD:
+            request.session["site_unlocked"] = True
+            return redirect(next_url)
+        messages.error(request, "Wachtwoord klopt niet.")
+    return render(request, "hunt/site_login.html", {"next_url": next_url})
 
 
 @ensure_csrf_cookie
