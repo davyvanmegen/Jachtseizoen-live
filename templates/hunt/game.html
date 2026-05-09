@@ -1,0 +1,48 @@
+{% extends "hunt/base.html" %}
+{% load static %}
+{% block content %}
+<section class="game-shell">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Game {{ game.code }}</p>
+      <h1 id="status">Laden...</h1>
+    </div>
+    <div class="timer" id="countdown"></div>
+  </header>
+  <div id="caught-banner" class="caught-banner hidden"></div>
+  <section class="location-panel">
+    <button id="enable-location" type="button">Locatie delen</button>
+    <p id="geo-status">Tik op de knop om locatiepermissie te geven.</p>
+  </section>
+  <div id="map"></div>
+  <section id="snapshot-panel" class="panel hidden">
+    <h2>Vrijgegeven vluchterlocaties</h2>
+    <ul id="snapshots" class="players"></ul>
+  </section>
+  <section class="actions">
+    <button id="caught-button" data-url="{% url 'mark_caught' game.code %}">Ik ben gepakt</button>
+    {% if player.is_host %}
+      <form id="stop-form" method="post" action="{% url 'stop_game' game.code %}">
+        {% csrf_token %}
+        <button id="stop-game" type="submit">Stop spel</button>
+      </form>
+    {% endif %}
+  </section>
+  <section class="panel caught-log-panel">
+    <h2>Gepakt-log</h2>
+    <ul id="caught-log" class="players"></ul>
+  </section>
+  <section class="panel">
+    <h2>Spelers</h2>
+    <ul id="players" class="players"></ul>
+  </section>
+</section>
+{% endblock %}
+{% block scripts %}
+{{ game.code|json_script:"game-code" }}
+{{ player.id|json_script:"player-id" }}
+{{ player.access_token|json_script:"player-token" }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'hunt/js/common.js' %}"></script>
+<script src="{% static 'hunt/js/game.js' %}"></script>
+{% endblock %}

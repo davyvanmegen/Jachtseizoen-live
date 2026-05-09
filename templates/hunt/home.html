@@ -1,0 +1,22 @@
+{% extends "hunt/base.html" %}
+{% block content %}
+<section class="home">
+  <h1>Jachtseizoen Live</h1>
+  <form method="post" class="panel">
+    {% csrf_token %}
+    <h2>Nieuwe game</h2>
+    {{ create_form.name.label_tag }}
+    {{ create_form.name }}
+    <button name="action" value="create">Maak game</button>
+  </form>
+  <form method="post" class="panel">
+    {% csrf_token %}
+    <h2>Meedoen</h2>
+    {{ join_form.name.label_tag }}
+    {{ join_form.name }}
+    {{ join_form.code.label_tag }}
+    {{ join_form.code }}
+    <button name="action" value="join">Join game</button>
+  </form>
+</section>
+{% endblock %}

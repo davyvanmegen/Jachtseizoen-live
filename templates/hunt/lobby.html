@@ -1,0 +1,70 @@
+{% extends "hunt/base.html" %}
+{% load static %}
+{% block content %}
+<section class="topbar">
+  <div>
+    <p class="eyebrow">Gamecode</p>
+    <h1>{{ game.code }}</h1>
+  </div>
+  <a href="{% url 'game' game.code %}">Naar game</a>
+</section>
+
+<section class="panel">
+  <h2>Lobby</h2>
+  <ul id="players" class="players"></ul>
+</section>
+
+<section class="panel">
+  <h2>Locatie</h2>
+  <label class="toggle-row">
+    <span>
+      <strong>Locatie delen</strong>
+      <small>Vraag nu alvast toestemming, zodat je locatie tijdens het spel automatisch wordt gedeeld.</small>
+    </span>
+    <input id="location-toggle" type="checkbox">
+  </label>
+  <p id="location-status" class="hint">Locatie delen staat uit.</p>
+</section>
+
+{% if player.is_host %}
+<section class="panel" id="host-panel">
+  <h2>Host-controls</h2>
+  <form id="settings-form" data-url="{% url 'update_settings' game.code %}">
+    {% csrf_token %}
+    <label>Aantal start-runners</label>
+    <select name="start_runner_count">
+      <option value="1" {% if game.start_runner_count == 1 %}selected{% endif %}>1</option>
+      <option value="2" {% if game.start_runner_count == 2 %}selected{% endif %}>2</option>
+      <option value="3" {% if game.start_runner_count == 3 %}selected{% endif %}>3</option>
+    </select>
+    <label>Voorsprong in seconden</label>
+    <input name="grace_period_seconds" type="number" min="10" value="{{ game.grace_period_seconds }}">
+    <label>Snapshot-interval in seconden</label>
+    <input name="snapshot_interval_seconds" type="number" min="10" value="{{ game.snapshot_interval_seconds }}">
+    <input type="hidden" name="start_runner_ids" id="start-runner-ids">
+    <div class="role-picker-header">
+      <div>
+        <h3>Startrollen</h3>
+        <p>Kies per speler runner of vluchter. Laat alles op vluchter voor willekeurig kiezen.</p>
+      </div>
+      <button type="button" id="random-runners">Willekeurig</button>
+    </div>
+    <div id="runner-picker" class="picker"></div>
+    <button type="submit">Instellingen opslaan</button>
+  </form>
+  <form id="start-form" method="post" action="{% url 'start_game' game.code %}">
+    {% csrf_token %}
+    <button id="start-game" type="submit">Start spel</button>
+  </form>
+  <p id="host-error" class="error" role="alert"></p>
+</section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{{ game.code|json_script:"game-code" }}
+{{ player.id|json_script:"player-id" }}
+{{ player.access_token|json_script:"player-token" }}
+{{ player.is_host|json_script:"is-host" }}
+<script src="{% static 'hunt/js/common.js' %}"></script>
+<script src="{% static 'hunt/js/lobby.js' %}"></script>
+{% endblock %}
